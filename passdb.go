@@ -68,6 +68,8 @@ func savedb() error {
 }
 
 func add(name string, password []byte) error {
+	clipboard.WriteAll(string(password))
+
 	p := Password{}
 	p.Salt = randString(8)
 
@@ -152,8 +154,6 @@ func main() {
 	flag.StringVar(&pass_, "p", string(randString(length)), "password to add")
 	flag.Parse()
 	pass = []byte(pass_)
-
-	fmt.Println(operation, name, length, pass_)
 
 	key_, err := gopass.GetPass("Session Key ")
 	if err != nil {
