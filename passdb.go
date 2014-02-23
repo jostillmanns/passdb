@@ -90,9 +90,9 @@ func add(name string, password []byte) error {
 }
 
 func read(name string) error {
-	p := logins[name]
+	p, ok := logins[name]
 
-	if logins[name].Pass == nil {
+	if !ok {
 		return fmt.Errorf("no such key")
 	}
 	key = pbkdf2.Key(key, p.Salt, 4096, 32, sha1.New)
