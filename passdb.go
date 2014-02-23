@@ -10,11 +10,11 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
+	"github.com/atotto/clipboard"
 	"io"
 	"io/ioutil"
 	"os"
 	"path/filepath"
-	"github.com/atotto/clipboard"
 )
 
 const (
@@ -49,7 +49,7 @@ func readdb() error {
 	return err
 }
 
-func savedb() error {	
+func savedb() error {
 	db, err := json.Marshal(logins)
 	if err != nil {
 		return err
@@ -70,7 +70,7 @@ func savedb() error {
 func add(name string, password []byte) error {
 	p := Password{}
 	p.Salt = randString(8)
-	
+
 	key = pbkdf2.Key(key, p.Salt, 4096, 32, sha1.New)
 
 	session, err := aes.NewCipher(key)
@@ -95,8 +95,8 @@ func add(name string, password []byte) error {
 
 func read(name string) error {
 	p := logins[name]
-	
-	if (logins[name].Pass == nil) {
+
+	if logins[name].Pass == nil {
 		return fmt.Errorf("no such key")
 	}
 	key = pbkdf2.Key(key, p.Salt, 4096, 32, sha1.New)
@@ -111,7 +111,7 @@ func read(name string) error {
 	pass_plain := make([]byte, len(pass_ciphered))
 	mode := cipher.NewCBCDecrypter(session, iv)
 	mode.CryptBlocks(pass_plain, pass_ciphered)
-	
+
 	clipboard.WriteAll(string(pass_plain))
 	return nil
 }
@@ -132,7 +132,7 @@ func del(name string) {
 func pad(input []byte) []byte {
 	if len(input)%aes.BlockSize == 0 {
 		return input
-	}	
+	}
 
 	out := make([]byte, 32)
 	copy(out, input)
@@ -164,7 +164,6 @@ func main() {
 	err = readdb()
 	if err != nil {
 		panic(err)
-
 	}
 
 	if operation == READ {
