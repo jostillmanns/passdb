@@ -65,7 +65,7 @@ func add(name string, password []byte) error {
 	clipboard.WriteAll(string(password))
 
 	p := Password{}
-	p.Salt = randString(8)
+	p.Salt = randBytes(8)
 
 	key = pbkdf2.Key(key, p.Salt, 4096, 32, sha1.New)
 
@@ -148,7 +148,7 @@ func main() {
 	flag.StringVar(&operation, "o", "read", "operations: read / add")
 	flag.StringVar(&name, "n", "name", "key name")
 	flag.IntVar(&length, "l", 16, "key length")
-	flag.StringVar(&pass_, "p", string(randString(length)), "password to add")
+	flag.StringVar(&pass_, "p", string(randBytes(length)), "password to add")
 	flag.Parse()
 	pass = []byte(pass_)
 
