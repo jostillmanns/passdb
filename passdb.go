@@ -112,9 +112,12 @@ func read(name string) error {
 	return nil
 }
 
-func randString(n int) []byte {
+func randBytes(n int) []byte {
 	var bytes = make([]byte, n)
-	rand.Read(bytes)
+	err := rand.Read(bytes)
+	if err != nil {
+		panic(err)
+	}
 	for i, b := range bytes {
 		bytes[i] = alphanum[b%byte(len(alphanum))]
 	}
