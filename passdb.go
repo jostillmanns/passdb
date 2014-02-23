@@ -13,7 +13,6 @@ import (
 	"github.com/atotto/clipboard"
 	"io"
 	"io/ioutil"
-	"os"
 	"path/filepath"
 )
 
@@ -53,12 +52,8 @@ func savedb() error {
 	if err != nil {
 		return err
 	}
-	perms, err := os.Stat(file)
-	if err != nil {
-		return err
-	}
 
-	err = ioutil.WriteFile(file, db, perms.Mode())
+	err = ioutil.WriteFile(file, db, 0)
 	if err != nil {
 		return err
 	}
