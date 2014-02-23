@@ -1,7 +1,7 @@
 package main
 
 import (
-	"code.google.com/p/crypto/pbkdf2"
+	"code.google.com/p/go.crypto/pbkdf2"
 	"code.google.com/p/gopass"
 	"crypto/aes"
 	"crypto/cipher"
