@@ -45,8 +45,7 @@ func readdb() error {
 		logins = make(map[string]Password)
 		return nil
 	}
-	err = json.Unmarshal(db, &logins)
-	return err
+	return json.Unmarshal(db, &logins)
 }
 
 func savedb() error {
@@ -84,7 +83,7 @@ func add(name string, password []byte) error {
 	pass_ciphered := make([]byte, aes.BlockSize+len(password))
 	iv := pass_ciphered[:aes.BlockSize]
 	if _, err := io.ReadFull(rand.Reader, iv); err != nil {
-		panic(err)
+		return err
 	}
 
 	mode := cipher.NewCBCEncrypter(session, iv)
