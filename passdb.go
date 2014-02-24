@@ -114,7 +114,7 @@ func read(name string) error {
 
 func randBytes(n int) []byte {
 	var bytes = make([]byte, n)
-	err := rand.Read(bytes)
+	_, err := rand.Read(bytes)
 	if err != nil {
 		panic(err)
 	}
