@@ -13,13 +13,16 @@ import (
 	"github.com/atotto/clipboard"
 	"io"
 	"io/ioutil"
+	"os/user"
 	"path/filepath"
 )
 
 const (
-	alphanum = "123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
-	READ     = "read"
-	ADD      = "add"
+	alphanum    = "123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
+	READ        = "read"
+	ADD         = "add"
+	LISTKEYS    = "listkeys"
+	PASSWORD_DB = ".config/passwords.json"
 )
 
 var (
@@ -48,7 +51,7 @@ func readdb() error {
 }
 
 func savedb() error {
-	db, err := json.Marshal(logins)
+	db, err := json.MarshalIndent(logins, "", "\t")
 	if err != nil {
 		return err
 	}
@@ -138,19 +141,32 @@ func pad(input []byte) []byte {
 	return out
 }
 
+func listkeys() {
+	for key, _ := range logins {
+		fmt.Println(key)
+	}
+}
+
 func main() {
-	file = filepath.Clean("passwords.json")
+	usr, _ := user.Current()
+	file = filepath.Join(usr.HomeDir, PASSWORD_DB)
 
 	var operation, name, pass_ string
 	var length int
 	var pass []byte
 
-	flag.StringVar(&operation, "o", "read", "operations: read / add")
+	flag.StringVar(&operation, "o", "read", "operations: read / add / listkeys")
 	flag.StringVar(&name, "n", "name", "key name")
 	flag.IntVar(&length, "l", 16, "key length")
-	flag.StringVar(&pass_, "p", string(randBytes(length)), "password to add")
+	flag.StringVar(&pass_, "p", "", "password to add")
 	flag.Parse()
-	pass = []byte(pass_)
+
+	if pass_ == "" {
+		pass = randBytes(length)
+
+	} else {
+		pass = []byte(pass_)
+	}
 
 	key_, err := gopass.GetPass("Session Key ")
 	if err != nil {
@@ -179,5 +195,8 @@ func main() {
 		if err != nil {
 			panic(err)
 		}
+	}
+	if operation == LISTKEYS {
+		listkeys()
 	}
 }
